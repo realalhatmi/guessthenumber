@@ -1,627 +1,661 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>لعبة الاقتباسات - Quiz</title>
-  <style>
-    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8;}
-    *{box-sizing:border-box;font-family: "Segoe UI", Tahoma, Arial, sans-serif}
-    body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#051226 0%, #082433 100%);color:#e6eef6}
-    .container{width:100%;max-width:760px;padding:28px}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:28px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
-    h1{margin:0 0 10px;font-size:20px;text-align:center}
-    .quote{font-size:20px;line-height:1.6;padding:22px;border-radius:10px;background:rgba(255,255,255,0.02);min-height:96px;display:flex;align-items:center;justify-content:center;text-align:center}
-    .controls{display:flex;gap:10px;justify-content:center;margin-top:18px}
-    button{cursor:pointer;border:0;padding:10px 14px;border-radius:10px;font-weight:600}
-    .btn-primary{background:var(--accent);color:#032;box-shadow:0 6px 18px rgba(6,182,212,0.12)}
-    .btn-ghost{background:transparent;color:var(--accent);border:2px solid rgba(6,182,212,0.12)}
-    .btn-danger{background:#ef4444;color:white;box-shadow:0 6px 18px rgba(239,68,68,0.12)}
-    .options{margin-top:18px;display:grid;gap:10px}
-    .option{background:rgba(255,255,255,0.05);padding:16px 18px;border-radius:12px;border:2px solid rgba(255,255,255,0.08);cursor:pointer;font-size:18px;font-weight:600;color:#fff;transition:transform .06s ease, background .2s ease, border .2s ease}
-    .option:active{transform:scale(.995)}
-    .option.disabled{opacity:.5;pointer-events:none}
-    .option.correct{background:linear-gradient(90deg, rgba(34,197,94,0.14), rgba(34,197,94,0.06));border-color:rgba(34,197,94,0.4)}
-    .option.wrong{background:linear-gradient(90deg, rgba(239,68,68,0.06), rgba(239,68,68,0.02));border-color:rgba(239,68,68,0.3)}
-    .meta{margin-top:12px;color:var(--muted);font-size:13px;text-align:center}
-    .progress{height:8px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden;margin-top:12px}
-    .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#60a5fa);width:0%}
-    footer{margin-top:14px;text-align:center;color:var(--muted);font-size:13px}
-    .teams-container{display:flex;justify-content:space-between;margin-bottom:20px}
-    .team{background:rgba(255,255,255,0.05);padding:15px;border-radius:10px;width:48%;text-align:center}
-    .team-name{font-weight:bold;margin-bottom:10px}
-    .team-score{font-size:24px;font-weight:bold;color:var(--accent)}
-    .score-controls{display:flex;justify-content:center;gap:10px;margin-top:10px}
-    .score-btn{background:rgba(255,255,255,0.1);color:white;border:none;border-radius:5px;width:30px;height:30px;cursor:pointer;font-weight:bold}
-    
-    /* Dashboard Styles */
-    .dashboard {display:none;margin-top:24px;border-top:1px solid rgba(255,255,255,0.05);padding-top:20px}
-    .dashboard.show{display:block}
-    .dashboard h2{font-size:18px;margin-bottom:15px;text-align:center}
-    .form-group{margin-bottom:15px}
-    .form-group label{display:block;margin-bottom:5px;font-size:14px;color:var(--muted)}
-    .form-group input,.form-group textarea{width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:white;font-size:14px}
-    .form-group textarea{min-height:80px;resize:vertical}
-    .choice-item{margin-bottom:10px;display:flex;align-items:center;gap:10px}
-    .choice-item input{flex:1}
-    .choice-item .correct-btn{padding:5px 10px;background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:5px;color:white;font-size:12px}
-    .choice-item .correct-btn.active{background:#22c55e;border-color:#22c55e}
-    .questions-list{margin-top:20px;max-height:200px;overflow-y:auto;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px}
-    .question-item{padding:12px;background:rgba(255,255,255,0.05);border-radius:6px;margin-bottom:8px;cursor:pointer;transition:background .2s}
-    .question-item:hover{background:rgba(255,255,255,0.08)}
-    .question-item.active{background:rgba(6,182,212,0.15);border-left:3px solid var(--accent)}
-    .question-text{font-weight:500;margin-bottom:5px}
-    .question-info{font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
-    .question-actions{display:flex;gap:5px;margin-top:10px}
-    .question-actions button{padding:5px 8px;font-size:12px}
-    
-    /* Toggle Switch */
-    .toggle-container{display:flex;justify-content:center;margin-top:20px}
-    .toggle-switch{background:rgba(255,255,255,0.05);border-radius:20px;padding:5px;display:inline-flex;gap:5px}
-    .toggle-btn{padding:8px 16px;border-radius:15px;background:transparent;border:none;color:var(--muted);cursor:pointer;font-weight:600}
-    .toggle-btn.active{background:var(--accent);color:#032}
-    
-    @media (max-width:520px){
-      .quote{font-size:18px}
-      .choice-item{flex-direction:column;align-items:stretch}
-      .choice-item .correct-btn{margin-top:5px}
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>لعبة الكلمات | مسجل الكلمات</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: #f4f7fc;  /* ناعم و مريح */
+            font-family: system-ui, 'Segoe UI', 'Tahoma', 'Noto Sans Arabic', sans-serif;
+            padding: 1.5rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* الحاوية الرئيسية */
+        .app-container {
+            max-width: 650px;
+            width: 100%;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            padding: 1.8rem 1.5rem 2rem;
+            transition: all 0.2s ease;
+        }
+
+        /* العنوان الرئيسي */
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            color: #1e3a5f;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.3px;
+            text-align: center;
+        }
+
+        .sub {
+            text-align: center;
+            color: #5f7f9e;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #e2edf2;
+            padding-bottom: 1rem;
+            margin-bottom: 1.8rem;
+        }
+
+        /* قسم الإدخال */
+        .input-section {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .input-wrapper {
+            flex: 2;
+            min-width: 160px;
+        }
+
+        .word-input {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 1.25rem;
+            font-family: inherit;
+            border: 1.5px solid #d4e0e9;
+            border-radius: 28px;
+            background: #ffffff;
+            transition: 0.2s;
+            text-align: right;
+            color: #1f2e3a;
+            font-weight: 500;
+        }
+
+        .word-input:focus {
+            outline: none;
+            border-color: #2c7da0;
+            box-shadow: 0 0 0 3px rgba(44, 125, 160, 0.15);
+        }
+
+        button {
+            background: #2c7da0;
+            border: none;
+            padding: 0 24px;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            font-family: inherit;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        button:active {
+            transform: scale(0.96);
+        }
+
+        button:focus-visible {
+            outline: 2px solid #1e5a7a;
+            outline-offset: 2px;
+        }
+
+        .btn-add {
+            background: #2c7da0;
+            min-width: 90px;
+        }
+
+        .btn-add:hover {
+            background: #1f6685;
+        }
+
+        .btn-clear-all {
+            background: #e0e7ed;
+            color: #3c5a73;
+            box-shadow: none;
+        }
+
+        .btn-clear-all:hover {
+            background: #cdd9e2;
+        }
+
+        /* شريط العداد والإجراءات */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 1.3rem;
+            background: #f0f5f9;
+            padding: 0.7rem 1.2rem;
+            border-radius: 60px;
+        }
+
+        .counter {
+            font-size: 1.25rem;
+            font-weight: 600;
+            background: #ffffffcc;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            color: #1e3a5f;
+        }
+
+        .counter span {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-left: 5px;
+            color: #1e5a7a;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-export, .btn-clear-all {
+            font-size: 0.9rem;
+            padding: 6px 18px;
+            border-radius: 32px;
+        }
+
+        .btn-export {
+            background: #3b8b5e;
+        }
+
+        .btn-export:hover {
+            background: #2d6e4a;
+        }
+
+        /* قائمة الكلمات */
+        .words-list-container {
+            margin-top: 1rem;
+            max-height: 380px;
+            overflow-y: auto;
+            border-radius: 24px;
+            background: #fefefe;
+        }
+
+        .words-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .word-item {
+            background: #ffffff;
+            border: 1px solid #e2edf2;
+            border-radius: 20px;
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .word-text {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #1a2c3c;
+            letter-spacing: -0.2px;
+            word-break: break-word;
+            padding-left: 12px;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #b6c8d6;
+            padding: 6px 10px;
+            border-radius: 40px;
+            transition: 0.2s;
+            box-shadow: none;
+            line-height: 1;
+        }
+
+        .delete-btn:hover {
+            color: #d9534f;
+            background: #fef2f0;
+            transform: scale(1.02);
+        }
+
+        /* رسالة النجاح المؤقتة */
+        .toast-msg {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3e2fcc;
+            backdrop-filter: blur(6px);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            z-index: 1000;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* مودال التصدير */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-card {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 36px;
+            padding: 1.5rem;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .modal-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            color: #1e3a5f;
+        }
+
+        .export-text {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 24px;
+            text-align: right;
+            font-size: 1rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 200px;
+            overflow: auto;
+            margin: 1rem 0;
+            border: 1px solid #cbdbe0;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 10px;
+            font-size: 1rem;
+        }
+
+        .btn-wa {
+            background: #25D366;
+        }
+
+        .btn-wa:hover {
+            background: #1da858;
+        }
+
+        .close-modal {
+            background: #9aaebf;
+        }
+
+        /* عدم تكرار الكلمات / رسالة سريعة */
+        .empty-list-message {
+            text-align: center;
+            color: #9bb7cd;
+            padding: 2rem 0;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 520px) {
+            .app-container {
+                padding: 1.2rem;
+            }
+            .word-text {
+                font-size: 1.2rem;
+            }
+            .stats-bar {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+                border-radius: 28px;
+            }
+            .action-buttons {
+                justify-content: space-between;
+            }
+            .btn-export, .btn-clear-all {
+                flex: 1;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card" role="main">
-      <h1>اختبر معرفتك — اختر قائل الاقتباس</h1>
-      
-      <div class="toggle-container">
-        <div class="toggle-switch">
-          <button id="gameToggle" class="toggle-btn active">اللعبة</button>
-          <button id="dashboardToggle" class="toggle-btn">لوحة التحكم</button>
-        </div>
-      </div>
-      
-      <div id="gameSection">
-        <div class="teams-container">
-          <div class="team" id="team1">
-            <div class="team-name">الفريق 1</div>
-            <div class="team-score" id="score1">0</div>
-            <div class="score-controls">
-              <button class="score-btn" onclick="updateScore(0, -1)">-</button>
-              <button class="score-btn" onclick="updateScore(0, 1)">+</button>
-            </div>
-          </div>
-          <div class="team" id="team2">
-            <div class="team-name">الفريق 2</div>
-            <div class="team-score" id="score2">0</div>
-            <div class="score-controls">
-              <button class="score-btn" onclick="updateScore(1, -1)">-</button>
-              <button class="score-btn" onclick="updateScore(1, 1)">+</button>
-            </div>
-          </div>
-        </div>
 
-        <div id="quote" class="quote" aria-live="polite"></div>
+<div class="app-container">
+    <h1>📝 لعبة الكلمات</h1>
+    <div class="sub">اكتب الكلمة ثم أضفها إلى القائمة</div>
 
-        <div class="controls">
-          <button id="revealBtn" class="btn-primary">إظهار الاختيارات</button>
-          <button id="nextBtn" class="btn-ghost" style="display:none">التالي</button>
+    <!-- قسم الإدخال -->
+    <div class="input-section">
+        <div class="input-wrapper">
+            <input type="text" id="wordInput" class="word-input" placeholder="أدخل كلمة..." autocomplete="off">
         </div>
-
-        <div id="options" class="options" aria-live="polite" style="display:none"></div>
-
-        <div class="progress" title="التقدّم"><i id="progBar"></i></div>
-        <div class="meta" id="meta"></div>
-      </div>
-      
-      <div id="dashboardSection" class="dashboard">
-        <h2>لوحة التحكم - إدارة الأسئلة</h2>
-        
-        <div class="form-group">
-          <label for="quoteInput">الاقتباس:</label>
-          <textarea id="quoteInput" placeholder="أدخل الاقتباس هنا..."></textarea>
-        </div>
-        
-        <div class="form-group">
-          <label>الاختيارات:</label>
-          <div id="choicesContainer">
-            <div class="choice-item">
-              <input type="text" class="choice-input" placeholder="الاختيار الأول" data-index="0">
-              <button class="correct-btn" data-index="0">✓ الصحيح</button>
-            </div>
-            <div class="choice-item">
-              <input type="text" class="choice-input" placeholder="الاختيار الثاني" data-index="1">
-              <button class="correct-btn" data-index="1">✓ الصحيح</button>
-            </div>
-            <div class="choice-item">
-              <input type="text" class="choice-input" placeholder="الاختيار الثالث" data-index="2">
-              <button class="correct-btn" data-index="2">✓ الصحيح</button>
-            </div>
-            <div class="choice-item">
-              <input type="text" class="choice-input" placeholder="الاختيار الرابع" data-index="3">
-              <button class="correct-btn" data-index="3">✓ الصحيح</button>
-            </div>
-          </div>
-        </div>
-        
-        <div class="controls">
-          <button id="saveQuestionBtn" class="btn-primary">حفظ السؤال</button>
-          <button id="updateQuestionBtn" class="btn-ghost" style="display:none">تحديث السؤال</button>
-          <button id="cancelEditBtn" class="btn-ghost" style="display:none">إلغاء</button>
-        </div>
-        
-        <div class="form-group">
-          <label>الأسئلة المخزنة (<span id="questionsCount">0</span>):</label>
-          <div id="questionsList" class="questions-list"></div>
-        </div>
-        
-        <div class="controls">
-          <button id="exportBtn" class="btn-ghost">تصدير الأسئلة</button>
-          <button id="importBtn" class="btn-ghost">استيراد الأسئلة</button>
-          <button id="resetBtn" class="btn-danger">إعادة تعيين</button>
-        </div>
-      </div>
-      
-      <footer>العاب الحاتمي - أبناءوأحفاد سليمان الحاتمي</footer>
+        <button id="addBtn" class="btn-add">➕ إضافة</button>
     </div>
-  </div>
 
-  <script>
-    // الأسئلة الافتراضية
-    let data = [
-      // ... الأسئلة الأصلية هنا (نفسها تمامًا) ...
-      {
-        quote: '“يا أبتِ افعل ما تؤمر ستجدني إن شاء الله من الصابرين.”',
-        choices: ['نبي موسى عليه السلام','نبي يعقوب عليه السلام','نبي إسماعيل عليه السلام','نبي يوسف عليه السلام'],
-        correct: 2
-      },
-      {
-        quote: '“إذا رأيت نيوب الليث بارزة فلا تظنن أن الليث يبتسم.”',
-        choices: ['أبو تمام','البحتري','المتنبي','ابن الرومي'],
-        correct: 2
-      },
-      // ... باقي الأسئلة ...
-    ];
+    <!-- شريط الإحصائيات والأزرار -->
+    <div class="stats-bar">
+        <div class="counter">📊 عدد الكلمات: <span id="wordCount">0</span></div>
+        <div class="action-buttons">
+            <button id="exportBtn" class="btn-export">📤 تصدير</button>
+            <button id="clearAllBtn" class="btn-clear-all">🗑️ مسح الكل</button>
+        </div>
+    </div>
 
-    // تهيئة المتغيرات
-    let idx = 0;
-    let editingQuestionIndex = -1;
-    
-    // عناصر اللعبة
-    const quoteEl = document.getElementById('quote');
-    const revealBtn = document.getElementById('revealBtn');
-    const optionsEl = document.getElementById('options');
-    const nextBtn = document.getElementById('nextBtn');
-    const progBar = document.getElementById('progBar');
-    const meta = document.getElementById('meta');
-    
-    // عناصر لوحة التحكم
-    const gameSection = document.getElementById('gameSection');
-    const dashboardSection = document.getElementById('dashboardSection');
-    const gameToggle = document.getElementById('gameToggle');
-    const dashboardToggle = document.getElementById('dashboardToggle');
-    const quoteInput = document.getElementById('quoteInput');
-    const choicesContainer = document.getElementById('choicesContainer');
-    const saveQuestionBtn = document.getElementById('saveQuestionBtn');
-    const updateQuestionBtn = document.getElementById('updateQuestionBtn');
-    const cancelEditBtn = document.getElementById('cancelEditBtn');
-    const questionsList = document.getElementById('questionsList');
-    const questionsCount = document.getElementById('questionsCount');
+    <!-- قائمة الكلمات -->
+    <div class="words-list-container">
+        <ul id="wordsList" class="words-list">
+            <li class="empty-list-message">✨ لا توجد كلمات بعد، أضف كلمة جديدة</li>
+        </ul>
+    </div>
+</div>
+
+<!-- مودال التصدير والمشاركة -->
+<div id="exportModal" class="modal">
+    <div class="modal-card">
+        <h3>📋 تصدير الكلمات</h3>
+        <div id="exportPreview" class="export-text"></div>
+        <div class="modal-buttons">
+            <button id="copyTextBtn" class="close-modal" style="background:#3f6b8c;">📋 نسخ</button>
+            <button id="whatsappShareBtn" class="btn-wa">💬 واتساب</button>
+            <button id="closeModalBtn" class="close-modal">إغلاق</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ------------------- الحالة والتخزين -------------------
+    let wordsArray = [];   // لتخزين الكلمات بالترتيب (نصوص فريدة)
+
+    // عناصر DOM
+    const wordInput = document.getElementById('wordInput');
+    const addBtn = document.getElementById('addBtn');
+    const wordsListEl = document.getElementById('wordsList');
+    const wordCountSpan = document.getElementById('wordCount');
+    const clearAllBtn = document.getElementById('clearAllBtn');
     const exportBtn = document.getElementById('exportBtn');
-    const importBtn = document.getElementById('importBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    
-    // نظام الفرق
-    let teams = [
-      { name: "الفريق 1", score: 0 },
-      { name: "الفريق 2", score: 0 }
-    ];
-    
-    // تحديث عرض النقاط
-    function updateScoreDisplay() {
-      document.getElementById('score1').textContent = teams[0].score;
-      document.getElementById('score2').textContent = teams[1].score;
+
+    // مودال التصدير
+    const exportModal = document.getElementById('exportModal');
+    const exportPreview = document.getElementById('exportPreview');
+    const copyTextBtn = document.getElementById('copyTextBtn');
+    const whatsappShareBtn = document.getElementById('whatsappShareBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    // مساعد عرض رسالة سريعة (toast)
+    function showMessage(text, isError = false) {
+        // إزالة أي توست سابق
+        const existingToast = document.querySelector('.toast-msg');
+        if(existingToast) existingToast.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'toast-msg';
+        toast.textContent = text;
+        if(isError) {
+            toast.style.background = "#b33b2ccc";
+        } else {
+            toast.style.background = "#2c7da0dd";
+        }
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 1800);
+    }
+
+    // تحديث واجهة قائمة الكلمات + العداد
+    function updateWordsListUI() {
+        // مسح المحتوى الحالي
+        wordsListEl.innerHTML = '';
+        
+        if(wordsArray.length === 0) {
+            // رسالة فارغة لطيفة
+            const emptyLi = document.createElement('li');
+            emptyLi.className = 'empty-list-message';
+            emptyLi.textContent = '📭 لا توجد كلمات، أضف كلمة جديدة';
+            wordsListEl.appendChild(emptyLi);
+        } else {
+            // عرض كل الكلمات
+            wordsArray.forEach((word, index) => {
+                const li = document.createElement('li');
+                li.className = 'word-item';
+                li.setAttribute('data-index', index);
+                
+                const wordSpan = document.createElement('span');
+                wordSpan.className = 'word-text';
+                wordSpan.textContent = word;
+                
+                const delBtn = document.createElement('button');
+                delBtn.className = 'delete-btn';
+                delBtn.innerHTML = '✖️';
+                delBtn.setAttribute('aria-label', 'حذف الكلمة');
+                // إضافة حدث الحذف
+                delBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteWordByIndex(index);
+                });
+                
+                li.appendChild(wordSpan);
+                li.appendChild(delBtn);
+                wordsListEl.appendChild(li);
+            });
+        }
+        // تحديث العداد
+        wordCountSpan.textContent = wordsArray.length;
     }
     
-    // تحديث النقاط
-    function updateScore(teamIndex, change) {
-      teams[teamIndex].score += change;
-      if (teams[teamIndex].score < 0) teams[teamIndex].score = 0;
-      updateScoreDisplay();
+    // حذف كلمة بناءً على الفهرس
+    function deleteWordByIndex(index) {
+        if(index >= 0 && index < wordsArray.length) {
+            const removedWord = wordsArray[index];
+            wordsArray.splice(index, 1);
+            updateWordsListUI();
+            showMessage(`✅ تم حذف "${removedWord}"`, false);
+        } else {
+            showMessage("⚠️ حدث خطأ في الحذف", true);
+        }
     }
     
-    // تغيير اسم الفريق
-    function changeTeamName(teamIndex) {
-      const newName = prompt(`أدخل اسم جديد لـ ${teams[teamIndex].name}:`, teams[teamIndex].name);
-      if (newName && newName.trim() !== '') {
-        teams[teamIndex].name = newName.trim();
-        document.querySelector(`#team${teamIndex+1} .team-name`).textContent = teams[teamIndex].name;
-      }
-    }
-    
-    // إضافة مستمعين لتغيير اسم الفريق
-    document.getElementById('team1').addEventListener('dblclick', () => changeTeamName(0));
-    document.getElementById('team2').addEventListener('dblclick', () => changeTeamName(1));
-    
-    // === دوال اللعبة ===
-    function renderQuote(){
-      const q = data[idx];
-      quoteEl.textContent = q.quote;
-      optionsEl.style.display = 'none';
-      optionsEl.innerHTML = '';
-      revealBtn.style.display = 'inline-block';
-      nextBtn.style.display = 'none';
-      meta.textContent = `السؤال ${idx+1} من ${data.length}`;
-      updateProgress();
-    }
-    
-    function updateProgress(){
-      const percent = Math.round((idx/data.length)*100);
-      progBar.style.width = percent + '%';
-    }
-    
-    function showOptions(){
-      const q = data[idx];
-      optionsEl.style.display = 'grid';
-      revealBtn.style.display = 'none';
-      
-      q.choices.forEach((c,i)=>{
-        const btn = document.createElement('button');
-        btn.className = 'option';
-        btn.innerHTML = c;
-        btn.setAttribute('data-i', i);
-        btn.addEventListener('click', onChoose);
-        optionsEl.appendChild(btn);
-      });
-    }
-    
-    function onChoose(e){
-      const btn = e.currentTarget;
-      const chosen = Number(btn.getAttribute('data-i'));
-      const correct = data[idx].correct;
-      
-      if(chosen === correct){
-        btn.classList.add('correct');
-        btn.textContent = btn.textContent + ' — صحيحة ✅';
-        Array.from(optionsEl.children).forEach(x=>x.classList.add('disabled'));
-        btn.classList.remove('disabled');
-        nextBtn.style.display = 'inline-block';
-        meta.textContent = 'إجابة صحيحة — أحسنت!';
-      } else {
-        btn.classList.add('wrong');
-        btn.textContent = btn.textContent + ' — خاطئة ✖';
-        btn.classList.add('disabled');
-        meta.textContent = 'خطأ — حاول مرة أخرى.';
-      }
-    }
-    
-    // === دوال لوحة التحكم ===
-    function updateQuestionsList() {
-      questionsList.innerHTML = '';
-      questionsCount.textContent = data.length;
-      
-      data.forEach((q, index) => {
-        const div = document.createElement('div');
-        div.className = 'question-item';
-        if (index === editingQuestionIndex) {
-          div.classList.add('active');
+    // إضافة كلمة جديدة (مع التحقق من التكرار والفراغ)
+    function addNewWord() {
+        let rawWord = wordInput.value.trim();
+        if(rawWord === "") {
+            showMessage("❌ لا يمكن إضافة كلمة فارغة!", true);
+            // تأثير بسيط: تظليل الإدخال
+            wordInput.style.borderColor = "#e68a7c";
+            setTimeout(() => { wordInput.style.borderColor = "#d4e0e9"; }, 500);
+            return false;
         }
         
-        div.innerHTML = `
-          <div class="question-text">${q.quote.substring(0, 50)}${q.quote.length > 50 ? '...' : ''}</div>
-          <div class="question-info">
-            <span>${q.choices[q.correct]} (✓)</span>
-            <span>#${index + 1}</span>
-          </div>
-          <div class="question-actions">
-            <button class="btn-ghost" onclick="editQuestion(${index})" style="font-size:12px">تعديل</button>
-            <button class="btn-danger" onclick="deleteQuestion(${index})" style="font-size:12px">حذف</button>
-          </div>
-        `;
+        // توحيد الكتابة: يمكن الحفاظ على النص كما هو لكن المقارنة case-insensitive (لنفس الكلمة بنفس الحروف)
+        // للعربية عموماً نحتاج مقارنة نصية دقيقة لكن منع التكرار الدقيق (نفس التهجئة)
+        const isDuplicate = wordsArray.some(existingWord => existingWord === rawWord);
+        if(isDuplicate) {
+            showMessage(`⚠️ الكلمة "${rawWord}" موجودة مسبقاً!`, true);
+            wordInput.value = "";
+            wordInput.focus();
+            return false;
+        }
         
-        div.addEventListener('click', () => {
-          document.querySelectorAll('.question-item').forEach(item => item.classList.remove('active'));
-          div.classList.add('active');
+        // إضافة الكلمة
+        wordsArray.push(rawWord);
+        updateWordsListUI();
+        
+        // مسح الحقل وإعطاء تغذية راجعة
+        wordInput.value = "";
+        wordInput.focus();
+        
+        // تأثير ناجح: وميض على الحاوية (اختياري)
+        const container = document.querySelector('.app-container');
+        container.style.transition = '0.1s';
+        container.style.boxShadow = '0 0 0 2px #2c7da0, 0 6px 18px rgba(0,0,0,0.05)';
+        setTimeout(() => {
+            container.style.boxShadow = '0 12px 28px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02)';
+        }, 200);
+        
+        showMessage(`✨ تمت إضافة "${rawWord}" بنجاح!`, false);
+        return true;
+    }
+    
+    // مسح جميع الكلمات
+    function clearAllWords() {
+        if(wordsArray.length === 0) {
+            showMessage("⚠️ القائمة فارغة بالفعل", true);
+            return;
+        }
+        if(confirm("هل أنت متأكد من مسح جميع الكلمات؟")) {
+            wordsArray = [];
+            updateWordsListUI();
+            showMessage("🗑️ تم مسح جميع الكلمات", false);
+        }
+    }
+    
+    // بناء نص التصدير المنظم حسب المطلوب
+    function buildExportText() {
+        if(wordsArray.length === 0) {
+            return "⚠️ لا توجد كلمات للتصدير.";
+        }
+        let header = "الكلمات:\n";
+        let listItems = wordsArray.map(word => `- ${word}`).join("\n");
+        return header + listItems;
+    }
+    
+    // فتح مودال التصدير وتحديث المعاينة
+    function openExportModal() {
+        const exportContent = buildExportText();
+        exportPreview.textContent = exportContent;
+        exportModal.style.display = "flex";
+    }
+    
+    // إغلاق المودال
+    function closeModal() {
+        exportModal.style.display = "none";
+    }
+    
+    // نسخ النص إلى الحافظة
+    async function copyExportText() {
+        const textToCopy = exportPreview.textContent;
+        if(!textToCopy || textToCopy.includes("لا توجد كلمات")) {
+            showMessage("❌ لا يوجد محتوى للنسخ", true);
+            return;
+        }
+        try {
+            await navigator.clipboard.writeText(textToCopy);
+            showMessage("📋 تم نسخ الكلمات إلى الحافظة!", false);
+        } catch(err) {
+            // Fallback قديم
+            const textarea = document.createElement('textarea');
+            textarea.value = textToCopy;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showMessage("📋 تم النسخ (طريقة احتياطية)", false);
+        }
+    }
+    
+    // مشاركة واتساب: إنشاء رابط https://wa.me/?text=ENCODED_TEXT
+    function shareWhatsApp() {
+        const exportContent = buildExportText();
+        if(wordsArray.length === 0) {
+            showMessage("⚠️ لا توجد كلمات للمشاركة عبر واتساب", true);
+            closeModal();
+            return;
+        }
+        // ترميز النص ليكون صالحاً لرابط URL
+        const encodedMessage = encodeURIComponent(exportContent);
+        const waLink = `https://wa.me/?text=${encodedMessage}`;
+        // فتح في نافذة جديدة
+        window.open(waLink, '_blank');
+        showMessage("📱 جاري فتح واتساب...", false);
+        // اختياري: لا نغلق المودال تلقائياً حتى يختار المستخدم
+    }
+    
+    // تهيئة الأحداث
+    function initEventListeners() {
+        addBtn.addEventListener('click', () => {
+            addNewWord();
         });
         
-        questionsList.appendChild(div);
-      });
-    }
-    
-    function clearForm() {
-      quoteInput.value = '';
-      const choiceInputs = document.querySelectorAll('.choice-input');
-      const correctBtns = document.querySelectorAll('.correct-btn');
-      
-      choiceInputs.forEach(input => input.value = '');
-      correctBtns.forEach(btn => btn.classList.remove('active'));
-      correctBtns[0].classList.add('active'); // تعيين أول اختيار كصحيح افتراضيًا
-      
-      editingQuestionIndex = -1;
-      saveQuestionBtn.style.display = 'inline-block';
-      updateQuestionBtn.style.display = 'none';
-      cancelEditBtn.style.display = 'none';
-    }
-    
-    function saveQuestion() {
-      const quote = quoteInput.value.trim();
-      const choices = [];
-      const choiceInputs = document.querySelectorAll('.choice-input');
-      let correct = 0;
-      
-      choiceInputs.forEach((input, index) => {
-        const value = input.value.trim();
-        if (value) {
-          choices.push(value);
-          const btn = document.querySelector(`.correct-btn[data-index="${index}"]`);
-          if (btn.classList.contains('active')) {
-            correct = choices.length - 1;
-          }
-        }
-      });
-      
-      if (!quote) {
-        alert('الرجاء إدخال الاقتباس');
-        return;
-      }
-      
-      if (choices.length < 2) {
-        alert('الرجاء إدخال خيارين على الأقل');
-        return;
-      }
-      
-      const newQuestion = {
-        quote: quote,
-        choices: choices,
-        correct: correct
-      };
-      
-      data.push(newQuestion);
-      saveToLocalStorage();
-      updateQuestionsList();
-      clearForm();
-      alert('تم حفظ السؤال بنجاح!');
-    }
-    
-    function editQuestion(index) {
-      const question = data[index];
-      quoteInput.value = question.quote;
-      
-      const choiceInputs = document.querySelectorAll('.choice-input');
-      const correctBtns = document.querySelectorAll('.correct-btn');
-      
-      choiceInputs.forEach((input, i) => {
-        input.value = question.choices[i] || '';
-      });
-      
-      correctBtns.forEach(btn => btn.classList.remove('active'));
-      correctBtns[question.correct].classList.add('active');
-      
-      editingQuestionIndex = index;
-      saveQuestionBtn.style.display = 'none';
-      updateQuestionBtn.style.display = 'inline-block';
-      cancelEditBtn.style.display = 'inline-block';
-      
-      updateQuestionsList();
-    }
-    
-    function updateQuestion() {
-      if (editingQuestionIndex === -1) return;
-      
-      const quote = quoteInput.value.trim();
-      const choices = [];
-      const choiceInputs = document.querySelectorAll('.choice-input');
-      let correct = 0;
-      
-      choiceInputs.forEach((input, index) => {
-        const value = input.value.trim();
-        if (value) {
-          choices.push(value);
-          const btn = document.querySelector(`.correct-btn[data-index="${index}"]`);
-          if (btn.classList.contains('active')) {
-            correct = choices.length - 1;
-          }
-        }
-      });
-      
-      if (!quote) {
-        alert('الرجاء إدخال الاقتباس');
-        return;
-      }
-      
-      if (choices.length < 2) {
-        alert('الرجاء إدخال خيارين على الأقل');
-        return;
-      }
-      
-      data[editingQuestionIndex] = {
-        quote: quote,
-        choices: choices,
-        correct: correct
-      };
-      
-      saveToLocalStorage();
-      updateQuestionsList();
-      clearForm();
-      alert('تم تحديث السؤال بنجاح!');
-    }
-    
-    function deleteQuestion(index) {
-      if (confirm('هل أنت متأكد من حذف هذا السؤال؟')) {
-        data.splice(index, 1);
-        if (editingQuestionIndex === index) {
-          clearForm();
-        }
-        saveToLocalStorage();
-        updateQuestionsList();
-        if (idx >= data.length) {
-          idx = 0;
-          renderQuote();
-        }
-      }
-    }
-    
-    function exportQuestions() {
-      const questionsStr = JSON.stringify(data, null, 2);
-      const blob = new Blob([questionsStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'أسئلة-الاقتباسات.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-    
-    function importQuestions() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.json';
-      
-      input.onchange = function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          try {
-            const importedData = JSON.parse(e.target.result);
-            if (Array.isArray(importedData) && importedData.length > 0) {
-              if (confirm(`هل تريد استيراد ${importedData.length} سؤال؟ سيتم إضافتها إلى الأسئلة الحالية.`)) {
-                data = [...data, ...importedData];
-                saveToLocalStorage();
-                updateQuestionsList();
-                renderQuote();
-                alert('تم استيراد الأسئلة بنجاح!');
-              }
-            } else {
-              alert('ملف غير صالح. يجب أن يحتوي على مصفوفة من الأسئلة.');
+        // إضافة كلمة بالضغط على Enter في حقل الإدخال
+        wordInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') {
+                e.preventDefault();
+                addNewWord();
             }
-          } catch (err) {
-            alert('خطأ في قراءة الملف. تأكد من أنه ملف JSON صالح.');
-          }
-        };
-        reader.readAsText(file);
-      };
-      
-      input.click();
+        });
+        
+        clearAllBtn.addEventListener('click', clearAllWords);
+        
+        exportBtn.addEventListener('click', openExportModal);
+        
+        // أزرار المودال
+        copyTextBtn.addEventListener('click', copyExportText);
+        whatsappShareBtn.addEventListener('click', shareWhatsApp);
+        closeModalBtn.addEventListener('click', closeModal);
+        
+        // إغلاق المودال عند النقر خارج المحتوى
+        exportModal.addEventListener('click', (e) => {
+            if(e.target === exportModal) {
+                closeModal();
+            }
+        });
+        
+        // إضافة لمسة تحسين: منع إضافة كلمات مكررة عن طريق التأكيد في addNewWord مسبقاً.
     }
     
-    function resetQuestions() {
-      if (confirm('هل أنت متأكد من إعادة تعيين جميع الأسئلة إلى الافتراضية؟ سيتم حذف جميع الأسئلة المضافة.')) {
-        // استعادة الأسئلة الافتراضية (يجب أن تكون في متغير defaultData)
-        data = [...defaultData];
-        saveToLocalStorage();
-        updateQuestionsList();
-        idx = 0;
-        renderQuote();
-        alert('تمت إعادة التعيين بنجاح!');
-      }
-    }
+    // optional: مسح الكل مع تأكيد
+    // كل الوظائف متكاملة
     
-    function saveToLocalStorage() {
-      try {
-        localStorage.setItem('quoteGameQuestions', JSON.stringify(data));
-      } catch (e) {
-        console.error('فشل في حفظ الأسئلة:', e);
-      }
-    }
-    
-    function loadFromLocalStorage() {
-      try {
-        const saved = localStorage.getItem('quoteGameQuestions');
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            data = parsed;
-          }
-        }
-      } catch (e) {
-        console.error('فشل في تحميل الأسئلة:', e);
-      }
-    }
-    
-    // === تهيئة أحداث لوحة التحكم ===
-    choicesContainer.addEventListener('click', (e) => {
-      if (e.target.classList.contains('correct-btn')) {
-        const index = e.target.getAttribute('data-index');
-        document.querySelectorAll('.correct-btn').forEach(btn => btn.classList.remove('active'));
-        e.target.classList.add('active');
-      }
-    });
-    
-    saveQuestionBtn.addEventListener('click', saveQuestion);
-    updateQuestionBtn.addEventListener('click', updateQuestion);
-    cancelEditBtn.addEventListener('click', clearForm);
-    exportBtn.addEventListener('click', exportQuestions);
-    importBtn.addEventListener('click', importQuestions);
-    resetBtn.addEventListener('click', resetQuestions);
-    
-    // تبديل بين اللعبة ولوحة التحكم
-    gameToggle.addEventListener('click', () => {
-      gameSection.style.display = 'block';
-      dashboardSection.classList.remove('show');
-      gameToggle.classList.add('active');
-      dashboardToggle.classList.remove('active');
-    });
-    
-    dashboardToggle.addEventListener('click', () => {
-      gameSection.style.display = 'none';
-      dashboardSection.classList.add('show');
-      gameToggle.classList.remove('active');
-      dashboardToggle.classList.add('active');
-      updateQuestionsList();
-    });
-    
-    // === أحداث اللعبة ===
-    revealBtn.addEventListener('click', showOptions);
-    nextBtn.addEventListener('click', () => {
-      idx = (idx + 1) % data.length;
-      renderQuote();
-    });
-    
-    // keyboard accessibility
-    window.addEventListener('keydown', (ev) => {
-      if (dashboardSection.classList.contains('show')) {
-        // في لوحة التحكم
-        if (ev.ctrlKey && ev.key === 's') {
-          ev.preventDefault();
-          if (editingQuestionIndex === -1) {
-            saveQuestionBtn.click();
-          } else {
-            updateQuestionBtn.click();
-          }
-        }
-      } else {
-        // في اللعبة
-        if (optionsEl.style.display === 'grid') {
-          const key = ev.key;
-          if (/[1-4]/.test(key)) {
-            const n = Number(key) - 1;
-            const btn = optionsEl.querySelector(`[data-i="${n}"]`);
-            if (btn && !btn.classList.contains('disabled')) btn.click();
-          }
-        }
-        if (ev.key === 'Enter' && revealBtn.style.display !== 'none') {
-          revealBtn.click();
-        }
-        if (ev.key === 'ArrowRight' && nextBtn.style.display !== 'none') nextBtn.click();
-      }
-    });
-    
-    // حفظ الأسئلة الافتراضية لميزة إعادة التعيين
-    const defaultData = JSON.parse(JSON.stringify(data));
-    
-    // التهيئة
+    // بدء التطبيق وتهيئة الحالة الأولية (مصفوفة فارغة)
     function init() {
-      loadFromLocalStorage();
-      updateQuestionsList();
-      renderQuote();
-      updateScoreDisplay();
-      clearForm();
+        wordsArray = [];     // نبدأ بقائمة نظيفة
+        updateWordsListUI();
+        initEventListeners();
+        // التركيز التلقائي على حقل الإدخال
+        wordInput.focus();
     }
     
+    // بدء التشغيل
     init();
-  </script>
+</script>
 </body>
 </html>
