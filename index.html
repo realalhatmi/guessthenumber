@@ -2,660 +2,1199 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>لعبة الكلمات | مسجل الكلمات</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ تحدي الوقت - إعدادات متعددة ⚡</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Tajawal', 'Segoe UI', sans-serif;
         }
-
         body {
-            background: #f4f7fc;  /* ناعم و مريح */
-            font-family: system-ui, 'Segoe UI', 'Tahoma', 'Noto Sans Arabic', sans-serif;
-            padding: 1.5rem 1rem;
             min-height: 100vh;
+            background: linear-gradient(145deg, #0e2b3a, #1d4b5e);
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            padding: 16px;
+            user-select: none; /* NEW: منع تحديد النص لتجنب التداخل */
         }
-
-        /* الحاوية الرئيسية */
-        .app-container {
-            max-width: 650px;
+        .game-box {
+            max-width: 950px;
             width: 100%;
-            margin: 0 auto;
-            background: #ffffff;
-            border-radius: 32px;
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02);
-            overflow: hidden;
-            padding: 1.8rem 1.5rem 2rem;
-            transition: all 0.2s ease;
+            background: rgba(0, 20, 30, 0.85);
+            backdrop-filter: blur(12px);
+            border: 2px solid #e6b422;
+            border-radius: 65px;
+            padding: 30px 25px;
+            box-shadow: 0 25px 45px #000000b0;
+            color: #f5f9ff;
         }
-
-        /* العنوان الرئيسي */
         h1 {
-            font-size: 1.9rem;
-            font-weight: 600;
-            color: #1e3a5f;
-            margin-bottom: 0.25rem;
-            letter-spacing: -0.3px;
             text-align: center;
-        }
-
-        .sub {
-            text-align: center;
-            color: #5f7f9e;
-            font-size: 0.9rem;
-            border-bottom: 1px solid #e2edf2;
-            padding-bottom: 1rem;
-            margin-bottom: 1.8rem;
-        }
-
-        /* قسم الإدخال */
-        .input-section {
+            font-size: 2.5rem;
             display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-        }
-
-        .input-wrapper {
-            flex: 2;
-            min-width: 160px;
-        }
-
-        .word-input {
-            width: 100%;
-            padding: 14px 18px;
-            font-size: 1.25rem;
-            font-family: inherit;
-            border: 1.5px solid #d4e0e9;
-            border-radius: 28px;
-            background: #ffffff;
-            transition: 0.2s;
-            text-align: right;
-            color: #1f2e3a;
-            font-weight: 500;
-        }
-
-        .word-input:focus {
-            outline: none;
-            border-color: #2c7da0;
-            box-shadow: 0 0 0 3px rgba(44, 125, 160, 0.15);
-        }
-
-        button {
-            background: #2c7da0;
-            border: none;
-            padding: 0 24px;
-            border-radius: 40px;
-            font-size: 1.1rem;
-            font-weight: 500;
-            font-family: inherit;
-            color: white;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-
-        button:active {
-            transform: scale(0.96);
-        }
-
-        button:focus-visible {
-            outline: 2px solid #1e5a7a;
-            outline-offset: 2px;
-        }
-
-        .btn-add {
-            background: #2c7da0;
-            min-width: 90px;
-        }
-
-        .btn-add:hover {
-            background: #1f6685;
-        }
-
-        .btn-clear-all {
-            background: #e0e7ed;
-            color: #3c5a73;
-            box-shadow: none;
-        }
-
-        .btn-clear-all:hover {
-            background: #cdd9e2;
-        }
-
-        /* شريط العداد والإجراءات */
-        .stats-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
+            gap: 15px;
             flex-wrap: wrap;
-            margin-bottom: 1.3rem;
-            background: #f0f5f9;
-            padding: 0.7rem 1.2rem;
-            border-radius: 60px;
+            margin-bottom: 15px;
         }
-
-        .counter {
-            font-size: 1.25rem;
-            font-weight: 600;
-            background: #ffffffcc;
-            padding: 0.2rem 1rem;
-            border-radius: 40px;
-            color: #1e3a5f;
-        }
-
-        .counter span {
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-left: 5px;
-            color: #1e5a7a;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-export, .btn-clear-all {
-            font-size: 0.9rem;
-            padding: 6px 18px;
-            border-radius: 32px;
-        }
-
-        .btn-export {
-            background: #3b8b5e;
-        }
-
-        .btn-export:hover {
-            background: #2d6e4a;
-        }
-
-        /* قائمة الكلمات */
-        .words-list-container {
-            margin-top: 1rem;
-            max-height: 380px;
-            overflow-y: auto;
-            border-radius: 24px;
-            background: #fefefe;
-        }
-
-        .words-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .word-item {
-            background: #ffffff;
-            border: 1px solid #e2edf2;
-            border-radius: 20px;
-            padding: 12px 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-        }
-
-        .word-text {
+        h1 span {
+            background: #e6b422;
+            color: #0d2a36;
             font-size: 1.4rem;
-            font-weight: 500;
-            color: #1a2c3c;
-            letter-spacing: -0.2px;
-            word-break: break-word;
-            padding-left: 12px;
+            padding: 8px 25px;
+            border-radius: 70px;
+            font-weight: 600;
         }
-
-        .delete-btn {
-            background: none;
+        
+        /* زر الإعدادات */
+        .settings-btn {
+            background: #4a6fa5;
+            color: white;
             border: none;
             font-size: 1.5rem;
+            padding: 12px 30px;
+            border-radius: 50px;
             cursor: pointer;
-            color: #b6c8d6;
-            padding: 6px 10px;
-            border-radius: 40px;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 2px solid #e6b422;
             transition: 0.2s;
-            box-shadow: none;
-            line-height: 1;
         }
-
-        .delete-btn:hover {
-            color: #d9534f;
-            background: #fef2f0;
+        .settings-btn:hover {
+            background: #5f8bc9;
             transform: scale(1.02);
         }
-
-        /* رسالة النجاح المؤقتة */
-        .toast-msg {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2c3e2fcc;
-            backdrop-filter: blur(6px);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 60px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            z-index: 1000;
-            transition: opacity 0.2s;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-
-        /* مودال التصدير */
-        .modal {
-            display: none;
+        
+        /* نافذة الإعدادات المنبثقة */
+        .settings-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1100;
-            backdrop-filter: blur(3px);
+            z-index: 1000;
         }
-
-        .modal-card {
-            background: white;
-            width: 90%;
+        .settings-content {
+            background: #174254;
+            border: 3px solid #e6b422;
+            border-radius: 60px;
+            padding: 35px;
             max-width: 500px;
-            border-radius: 36px;
-            padding: 1.5rem;
-            box-shadow: 0 25px 40px rgba(0,0,0,0.2);
-            text-align: center;
+            width: 90%;
+            color: white;
         }
-
-        .modal-card h3 {
+        .settings-content h2 {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #ffd966;
+        }
+        .settings-option {
+            background: #1f5063;
+            border-radius: 40px;
+            padding: 20px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .settings-option:hover {
+            border-color: #f3b33d;
+        }
+        .settings-option.selected {
+            border-color: #e6b422;
+            background: #2a647d;
+        }
+        .option-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #ffdb9d;
+        }
+        .option-desc {
+            font-size: 1.2rem;
+            color: #d9f0ff;
+        }
+        .close-settings {
+            background: #e6b422;
+            color: #0d2a36;
+            border: none;
             font-size: 1.6rem;
-            margin-bottom: 1rem;
-            color: #1e3a5f;
+            padding: 15px 40px;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 7px 0 #7e602a;
+            transition: 0.07s;
         }
-
-        .export-text {
-            background: #f1f5f9;
-            padding: 1rem;
-            border-radius: 24px;
-            text-align: right;
-            font-size: 1rem;
-            font-family: monospace;
-            white-space: pre-wrap;
-            word-break: break-word;
-            max-height: 200px;
-            overflow: auto;
-            margin: 1rem 0;
-            border: 1px solid #cbdbe0;
+        .close-settings:active {
+            transform: translateY(6px);
+            box-shadow: 0 1px 0 #7e602a;
         }
-
-        .modal-buttons {
+        .hidden {
+            display: none;
+        }
+        
+        .setup-section {
+            background: #174254;
+            border-radius: 55px;
+            padding: 25px 20px;
+            margin: 20px 0;
+            border: 2px solid #f3b33d;
+        }
+        .teams-row {
             display: flex;
-            gap: 12px;
+            flex-wrap: wrap;
+            gap: 20px;
             justify-content: center;
-            margin-top: 10px;
+            margin-bottom: 20px;
         }
-
-        .modal-buttons button {
-            flex: 1;
-            padding: 10px;
-            font-size: 1rem;
+        .team-panel {
+            flex: 1 1 250px;
+            background: #1f5063;
+            border-radius: 50px;
+            padding: 22px 18px;
+            border: 2px solid #f3b33d90;
         }
-
-        .btn-wa {
-            background: #25D366;
-        }
-
-        .btn-wa:hover {
-            background: #1da858;
-        }
-
-        .close-modal {
-            background: #9aaebf;
-        }
-
-        /* عدم تكرار الكلمات / رسالة سريعة */
-        .empty-list-message {
+        .team-panel label {
+            display: block;
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+            color: #ffd966;
+            font-weight: 600;
             text-align: center;
-            color: #9bb7cd;
-            padding: 2rem 0;
+        }
+        .team-panel input {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 1.5rem;
+            border-radius: 60px;
+            border: none;
+            background: #eef3f8;
+            color: #0f2e3c;
+            font-weight: 700;
+            text-align: center;
+            outline: 3px solid transparent;
+        }
+        .team-panel input:focus {
+            outline: 3px solid #f3b33d;
+        }
+        .target-wrapper {
+            background: #1b4c61;
+            border-radius: 60px;
+            padding: 25px 20px;
+            text-align: center;
+            margin: 15px 0 10px;
+        }
+        .target-label {
+            font-size: 1.7rem;
+            margin-bottom: 20px;
+            color: #ffe57f;
+        }
+        .time-picker {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .time-picker input {
+            width: 130px;
+            padding: 18px;
+            font-size: 2.2rem;
+            text-align: center;
+            border-radius: 60px;
+            border: none;
+            background: #f0f7ff;
+            color: #0f2a35;
+            font-weight: 700;
+        }
+        .time-picker span {
+            font-size: 2rem;
+        }
+        .target-preview {
+            background: #0f3649;
+            font-size: 2rem;
+            padding: 12px 30px;
+            border-radius: 80px;
+            display: inline-block;
+            margin-top: 20px;
+            border: 2px solid #e5b04b;
+        }
+        .btn {
+            border: none;
+            font-weight: 700;
+            border-radius: 80px;
+            cursor: pointer;
+            transition: 0.07s linear;
+            font-size: 1.6rem;
+            padding: 16px 40px;
+            box-shadow: 0 7px 0 #7e602a;
+        }
+        .btn-gold {
+            background: #f3b33d;
+            color: #1a3847;
+            width: fit-content;
+            margin: 20px auto 5px;
+        }
+        .btn-gold:active {
+            transform: translateY(6px);
+            box-shadow: 0 1px 0 #7e602a;
+        }
+        
+        /* منطقة اللعب */
+        .game-area {
+            background: #164454;
+            border-radius: 65px;
+            padding: 25px 20px;
+            border: 3px solid #f3b33d;
+            margin-top: 15px;
+        }
+        
+        /* وضع منفصل (دور بعد دور) */
+        .turn-indicator {
+            background: #256077;
+            border-radius: 50px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 2rem;
+        }
+        .current-turn {
+            color: #ffd966;
+            font-weight: 700;
+        }
+        
+        /* وضع متزامن */
+        .players-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .player-timer-card {
+            flex: 1 1 280px;
+            background: #1d4f66;
+            border-radius: 50px;
+            padding: 20px 15px;
+            border: 2px solid #f3b33d70;
+            text-align: center;
+        }
+        .player-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0f3a4b;
+            border-radius: 40px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+        }
+        .player-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffdb9d;
+        }
+        .player-key {
+            background: #e6b422;
+            color: #0b2d3a;
+            padding: 5px 20px;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .player-timer {
+            background: #0f2f3e;
+            border-radius: 40px;
+            padding: 20px 10px;
+            margin: 15px 0;
+        }
+        .player-digits {
+            font-family: 'Courier New', monospace;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #fad275;
+        }
+        .player-status {
+            font-size: 1.3rem;
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 30px;
+        }
+        .status-ready { background: #f39c12; color: #0b2d3a; }
+        .status-running { background: #27ae60; color: white; }
+        .status-stopped { background: #3498db; color: white; }
+        .status-waiting { background: #95a5a6; color: white; }
+        
+        .progress-container {
+            background: #1c546b;
+            height: 12px;
+            border-radius: 20px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #f3b33d;
+            border-radius: 20px;
+            transition: width 0.1s linear;
+        }
+        .progress-fill.p1-fill { background: #f39c12; }
+        .progress-fill.p2-fill { background: #2ecc71; }
+        
+        .global-timer {
+            text-align: center;
+            background: #1c2938;
+            border-radius: 70px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .global-digits {
+            font-family: 'Courier New', monospace;
+            font-size: 2.5rem;
+            color: #fad275;
+        }
+        
+        .hint-text {
+            font-size: 1.4rem;
+            text-align: center;
+            margin: 15px 0;
+            color: #d9f0ff;
+        }
+        
+        .action-btn {
+            background: #2ecc71;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            padding: 20px 0;
+            width: 100%;
+            border-radius: 120px;
+            cursor: pointer;
+            box-shadow: 0 12px 0 #1b7943;
+            transition: 0.08s;
+            margin: 15px 0;
+        }
+        .action-btn.reset-btn {
+            background: #4a6fa5;
+            box-shadow: 0 8px 0 #2f4b73;
+        }
+        .action-btn:active {
+            transform: translateY(8px);
+            box-shadow: 0 4px 0 #1b7943;
+        }
+        .action-btn.reset-btn:active {
+            box-shadow: 0 4px 0 #2f4b73;
+        }
+        
+        .results-board {
+            background: #154452;
+            border-radius: 60px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 4px solid #e6b422;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .result-card {
+            background: #226077;
+            padding: 18px;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 1.3rem;
+        }
+        .winner-box {
+            background: #e6b422;
+            color: #0c2938;
+            font-size: 2rem;
+            font-weight: 700;
+            padding: 18px;
+            border-radius: 70px;
+            text-align: center;
+        }
+        .footer-note {
+            text-align: center;
+            margin-top: 20px;
+            opacity: 0.8;
             font-size: 1.1rem;
         }
-
-        @media (max-width: 520px) {
-            .app-container {
-                padding: 1.2rem;
-            }
-            .word-text {
-                font-size: 1.2rem;
-            }
-            .stats-bar {
-                flex-direction: column;
-                gap: 12px;
-                align-items: stretch;
-                border-radius: 28px;
-            }
-            .action-buttons {
-                justify-content: space-between;
-            }
-            .btn-export, .btn-clear-all {
-                flex: 1;
-                text-align: center;
-            }
+        
+        /* NEW: منطقة اللعب القابلة للنقر */
+        .clickable-area {
+            cursor: pointer;
+        }
+        
+        /* NEW: منع النقر على الأزرار من تفعيل التوقيت */
+        .action-btn, .settings-btn, .close-settings, .settings-option, .btn-gold, .restart-btn {
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
+<div class="game-box">
+    <h1>⚡ تحدي الوقت ⚡</h1>
+    
+    <!-- زر الإعدادات -->
+    <button class="settings-btn" id="settingsBtn">
+        <span>⚙️</span> الإعدادات
+    </button>
 
-<div class="app-container">
-    <h1>📝 لعبة الكلمات</h1>
-    <div class="sub">اكتب الكلمة ثم أضفها إلى القائمة</div>
-
-    <!-- قسم الإدخال -->
-    <div class="input-section">
-        <div class="input-wrapper">
-            <input type="text" id="wordInput" class="word-input" placeholder="أدخل كلمة..." autocomplete="off">
-        </div>
-        <button id="addBtn" class="btn-add">➕ إضافة</button>
-    </div>
-
-    <!-- شريط الإحصائيات والأزرار -->
-    <div class="stats-bar">
-        <div class="counter">📊 عدد الكلمات: <span id="wordCount">0</span></div>
-        <div class="action-buttons">
-            <button id="exportBtn" class="btn-export">📤 تصدير</button>
-            <button id="clearAllBtn" class="btn-clear-all">🗑️ مسح الكل</button>
-        </div>
-    </div>
-
-    <!-- قائمة الكلمات -->
-    <div class="words-list-container">
-        <ul id="wordsList" class="words-list">
-            <li class="empty-list-message">✨ لا توجد كلمات بعد، أضف كلمة جديدة</li>
-        </ul>
-    </div>
-</div>
-
-<!-- مودال التصدير والمشاركة -->
-<div id="exportModal" class="modal">
-    <div class="modal-card">
-        <h3>📋 تصدير الكلمات</h3>
-        <div id="exportPreview" class="export-text"></div>
-        <div class="modal-buttons">
-            <button id="copyTextBtn" class="close-modal" style="background:#3f6b8c;">📋 نسخ</button>
-            <button id="whatsappShareBtn" class="btn-wa">💬 واتساب</button>
-            <button id="closeModalBtn" class="close-modal">إغلاق</button>
+    <!-- نافذة الإعدادات المنبثقة -->
+    <div id="settingsModal" class="settings-modal hidden">
+        <div class="settings-content">
+            <h2>⚙️ إعدادات اللعب</h2>
+            
+            <div class="settings-option" id="modeDefault" data-mode="default">
+                <div class="option-title">🎯 منفصل (دور بعد دور)</div>
+                <div class="option-desc">اللاعب 1 يلعب أولاً، ثم اللاعب 2 - كل لاعب له دور مستقل</div>
+            </div>
+            
+            <div class="settings-option" id="modeSimultaneous" data-mode="simultaneous">
+                <div class="option-title">⚡ متزامن (مع بعض)</div>
+                <div class="option-desc">اللاعبان يلعبان في نفس الوقت - كل واحد له تايمره الخاص</div>
+            </div>
+            
+            <button class="close-settings" id="closeSettingsBtn">حفظ وإغلاق</button>
         </div>
     </div>
+
+    <!-- مرحلة الإعداد -->
+    <div id="setupPhase">
+        <div class="setup-section">
+            <div class="teams-row">
+                <div class="team-panel">
+                    <label>👤 اللاعب 1</label>
+                    <input type="text" id="player1Name" placeholder="اسم اللاعب 1" value="الأسد" oninput="saveSettingsToLocalStorage()">
+                </div>
+                <div class="team-panel">
+                    <label>👤 اللاعب 2</label>
+                    <input type="text" id="player2Name" placeholder="اسم اللاعب 2" value="النمر" oninput="saveSettingsToLocalStorage()">
+                </div>
+            </div>
+            <div class="target-wrapper">
+                <div class="target-label">🎯 اختر الوقت المستهدف</div>
+                <div class="time-picker">
+                    <input type="number" id="targetInput" min="0.5" max="120" step="0.5" value="10.0" oninput="updateTargetPreviewAndSave()">
+                    <span>ثانية</span>
+                </div>
+                <div class="target-preview" id="targetPreview">⏱️ 10.00 ثانية</div>
+            </div>
+            <button class="btn btn-gold" id="confirmStartBtn">🚀 بدء التحدي</button>
+        </div>
+    </div>
+
+    <!-- منطقة اللعب - وضع منفصل (دور بعد دور) -->
+    <div id="gameplaySequential" class="hidden clickable-area">
+        <div class="game-area">
+            <div class="turn-indicator">
+                <span class="current-turn" id="sequentialTurn">دور اللاعب 1</span>
+            </div>
+            
+            <div class="player-timer-card">
+                <div class="player-header">
+                    <span class="player-name" id="seqCurrentPlayer">اللاعب 1</span>
+                </div>
+                <div class="player-timer">
+                    <span class="player-digits" id="seqTimerInt">0</span><span class="player-digits" id="seqTimerFraction">.000</span>
+                </div>
+                <div class="player-status" id="seqStatus">⏸️ اضغط Enter أو انقر في أي مكان للبدء</div>
+                <div class="progress-container">
+                    <div class="progress-fill" id="seqProgress" style="width: 0%;"></div>
+                </div>
+            </div>
+            
+            <div class="global-timer">
+                <span class="global-digits" id="seqTarget">الوقت المستهدف: 10.00 ث</span>
+            </div>
+            
+            <button class="action-btn reset-btn" id="resetSequentialBtn">↺ إعادة الجولة</button>
+        </div>
+    </div>
+
+    <!-- منطقة اللعب - وضع متزامن (مع بعض) -->
+    <div id="gameplaySimultaneous" class="hidden clickable-area">
+        <div class="game-area">
+            <div class="players-container">
+                <!-- اللاعب 1 -->
+                <div class="player-timer-card" id="simP1Card">
+                    <div class="player-header">
+                        <span class="player-name" id="simP1Name">الأسد</span>
+                        <span class="player-key">Enter ⏎</span>
+                    </div>
+                    <div class="player-timer">
+                        <span class="player-digits" id="simP1TimerInt">0</span><span class="player-digits" id="simP1TimerFraction">.000</span>
+                    </div>
+                    <div class="player-status" id="simP1Status">⏸️ جاهز</div>
+                    <div class="progress-container">
+                        <div class="progress-fill p1-fill" id="simP1Progress" style="width: 0%;"></div>
+                    </div>
+                </div>
+                
+                <!-- اللاعب 2 -->
+                <div class="player-timer-card" id="simP2Card">
+                    <div class="player-header">
+                        <span class="player-key">Space ⎵</span>
+                        <span class="player-name" id="simP2Name">النمر</span>
+                    </div>
+                    <div class="player-timer">
+                        <span class="player-digits" id="simP2TimerInt">0</span><span class="player-digits" id="simP2TimerFraction">.000</span>
+                    </div>
+                    <div class="player-status" id="simP2Status">⏸️ جاهز</div>
+                    <div class="progress-container">
+                        <div class="progress-fill p2-fill" id="simP2Progress" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="global-timer">
+                <span class="global-digits" id="simTarget">الوقت المستهدف: 10.00 ث</span>
+            </div>
+            
+            <button class="action-btn reset-btn" id="resetSimultaneousBtn">↺ بدء جولة جديدة</button>
+        </div>
+    </div>
+
+    <!-- عرض النتائج -->
+    <div id="resultsPhase" class="hidden">
+        <div class="results-board">
+            <h2 style="text-align:center;">📋 النتائج النهائية</h2>
+            <div class="grid-2">
+                <div class="result-card">
+                    <div><strong id="resPlayer1">اللاعب 1</strong></div>
+                    <div>⏱️ <span id="player1Time">0.000</span></div>
+                    <div>📊 الفرق <span id="player1Diff">0.000</span></div>
+                </div>
+                <div class="result-card">
+                    <div><strong id="resPlayer2">اللاعب 2</strong></div>
+                    <div>⏱️ <span id="player2Time">0.000</span></div>
+                    <div>📊 الفرق <span id="player2Diff">0.000</span></div>
+                </div>
+            </div>
+            <div style="text-align:center; margin:10px 0;">🎯 الوقت المستهدف: <span id="resTarget">10.00</span> ث</div>
+            <div class="winner-box" id="winnerMsg">🏆 الفائز</div>
+            <button class="btn restart-btn" id="fullRestartBtn">🔄 العودة للقائمة الرئيسية</button>
+        </div>
+    </div>
+    
+    <div class="footer-note" id="modeDisplay">الوضع الحالي: منفصل (دور بعد دور)</div>
 </div>
 
 <script>
-    // ------------------- الحالة والتخزين -------------------
-    let wordsArray = [];   // لتخزين الكلمات بالترتيب (نصوص فريدة)
+    (function() {
+        // ---------- المتغيرات الرئيسية ----------
+        let player1Name = "الأسد";
+        let player2Name = "النمر";
+        let targetTime = 10.0;
+        
+        // وضع اللعب: 'default' (منفصل) أو 'simultaneous' (متزامن)
+        let gameMode = 'default';
+        
+        // بيانات اللاعبين للوضع المتزامن
+        let simPlayer1 = {
+            time: null,
+            isRunning: false,
+            startTime: null,
+            interval: null,
+            done: false
+        };
+        
+        let simPlayer2 = {
+            time: null,
+            isRunning: false,
+            startTime: null,
+            interval: null,
+            done: false
+        };
+        
+        // بيانات للوضع المنفصل (دور بعد دور)
+        let seqCurrentPlayer = 1;
+        let seqPlayer1Time = null;
+        let seqPlayer2Time = null;
+        let seqIsRunning = false;
+        let seqStartTime = null;
+        let seqInterval = null;
+        let seqPlayer1Done = false;
+        let seqPlayer2Done = false;
 
-    // عناصر DOM
-    const wordInput = document.getElementById('wordInput');
-    const addBtn = document.getElementById('addBtn');
-    const wordsListEl = document.getElementById('wordsList');
-    const wordCountSpan = document.getElementById('wordCount');
-    const clearAllBtn = document.getElementById('clearAllBtn');
-    const exportBtn = document.getElementById('exportBtn');
+        // عناصر DOM
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const modeDefault = document.getElementById('modeDefault');
+        const modeSimultaneous = document.getElementById('modeSimultaneous');
+        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+        
+        const setupPhase = document.getElementById('setupPhase');
+        const gameplaySequential = document.getElementById('gameplaySequential');
+        const gameplaySimultaneous = document.getElementById('gameplaySimultaneous');
+        const resultsPhase = document.getElementById('resultsPhase');
+        
+        const p1Input = document.getElementById('player1Name');
+        const p2Input = document.getElementById('player2Name');
+        const targetInput = document.getElementById('targetInput');
+        const targetPreview = document.getElementById('targetPreview');
+        const confirmBtn = document.getElementById('confirmStartBtn');
+        const fullRestartBtn = document.getElementById('fullRestartBtn');
+        const modeDisplay = document.getElementById('modeDisplay');
+        
+        // عناصر الوضع المنفصل
+        const sequentialTurn = document.getElementById('sequentialTurn');
+        const seqCurrentPlayerSpan = document.getElementById('seqCurrentPlayer');
+        const seqTimerInt = document.getElementById('seqTimerInt');
+        const seqTimerFraction = document.getElementById('seqTimerFraction');
+        const seqStatus = document.getElementById('seqStatus');
+        const seqProgress = document.getElementById('seqProgress');
+        const seqTarget = document.getElementById('seqTarget');
+        const resetSequentialBtn = document.getElementById('resetSequentialBtn');
+        
+        // عناصر الوضع المتزامن
+        const simP1Name = document.getElementById('simP1Name');
+        const simP2Name = document.getElementById('simP2Name');
+        const simP1TimerInt = document.getElementById('simP1TimerInt');
+        const simP1TimerFraction = document.getElementById('simP1TimerFraction');
+        const simP2TimerInt = document.getElementById('simP2TimerInt');
+        const simP2TimerFraction = document.getElementById('simP2TimerFraction');
+        const simP1Status = document.getElementById('simP1Status');
+        const simP2Status = document.getElementById('simP2Status');
+        const simP1Progress = document.getElementById('simP1Progress');
+        const simP2Progress = document.getElementById('simP2Progress');
+        const simTarget = document.getElementById('simTarget');
+        const resetSimultaneousBtn = document.getElementById('resetSimultaneousBtn');
+        const simP1Card = document.getElementById('simP1Card');
+        const simP2Card = document.getElementById('simP2Card');
+        
+        // عناصر النتائج
+        const resPlayer1 = document.getElementById('resPlayer1');
+        const resPlayer2 = document.getElementById('resPlayer2');
+        const player1TimeSpan = document.getElementById('player1Time');
+        const player2TimeSpan = document.getElementById('player2Time');
+        const player1DiffSpan = document.getElementById('player1Diff');
+        const player2DiffSpan = document.getElementById('player2Diff');
+        const resTargetSpan = document.getElementById('resTarget');
+        const winnerMsg = document.getElementById('winnerMsg');
 
-    // مودال التصدير
-    const exportModal = document.getElementById('exportModal');
-    const exportPreview = document.getElementById('exportPreview');
-    const copyTextBtn = document.getElementById('copyTextBtn');
-    const whatsappShareBtn = document.getElementById('whatsappShareBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
+        // ========== وظائف حفظ وتحميل الإعدادات من localStorage ==========
+        window.saveSettingsToLocalStorage = function() {
+            const settings = {
+                player1Name: p1Input.value.trim() || "اللاعب 1",
+                player2Name: p2Input.value.trim() || "اللاعب 2",
+                targetTime: parseFloat(targetInput.value) || 10.0,
+                gameMode: gameMode
+            };
+            localStorage.setItem('gameSettings', JSON.stringify(settings));
+        };
 
-    // مساعد عرض رسالة سريعة (toast)
-    function showMessage(text, isError = false) {
-        // إزالة أي توست سابق
-        const existingToast = document.querySelector('.toast-msg');
-        if(existingToast) existingToast.remove();
+        // تحميل الإعدادات
+        function loadSettingsFromLocalStorage() {
+            const savedSettings = localStorage.getItem('gameSettings');
+            if (savedSettings) {
+                try {
+                    const settings = JSON.parse(savedSettings);
+                    
+                    player1Name = settings.player1Name || "الأسد";
+                    player2Name = settings.player2Name || "النمر";
+                    targetTime = settings.targetTime || 10.0;
+                    gameMode = settings.gameMode || 'default';
+                    
+                    p1Input.value = player1Name;
+                    p2Input.value = player2Name;
+                    targetInput.value = targetTime;
+                    
+                    updateTargetPreview();
+                    
+                    if (gameMode === 'default') {
+                        modeDefault.classList.add('selected');
+                        modeSimultaneous.classList.remove('selected');
+                    } else {
+                        modeSimultaneous.classList.add('selected');
+                        modeDefault.classList.remove('selected');
+                    }
+                    
+                    modeDisplay.innerText = gameMode === 'default' ? 
+                        'الوضع الحالي: منفصل (دور بعد دور)' : 
+                        'الوضع الحالي: متزامن (مع بعض)';
+                        
+                } catch (e) {
+                    console.error('خطأ في تحميل الإعدادات', e);
+                }
+            }
+        }
 
-        const toast = document.createElement('div');
-        toast.className = 'toast-msg';
-        toast.textContent = text;
-        if(isError) {
-            toast.style.background = "#b33b2ccc";
-        } else {
-            toast.style.background = "#2c7da0dd";
-        }
-        document.body.appendChild(toast);
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            setTimeout(() => toast.remove(), 300);
-        }, 1800);
-    }
+        // تحديث المعاينة مع الحفظ
+        window.updateTargetPreviewAndSave = function() {
+            updateTargetPreview();
+            saveSettingsToLocalStorage();
+        };
 
-    // تحديث واجهة قائمة الكلمات + العداد
-    function updateWordsListUI() {
-        // مسح المحتوى الحالي
-        wordsListEl.innerHTML = '';
-        
-        if(wordsArray.length === 0) {
-            // رسالة فارغة لطيفة
-            const emptyLi = document.createElement('li');
-            emptyLi.className = 'empty-list-message';
-            emptyLi.textContent = '📭 لا توجد كلمات، أضف كلمة جديدة';
-            wordsListEl.appendChild(emptyLi);
-        } else {
-            // عرض كل الكلمات
-            wordsArray.forEach((word, index) => {
-                const li = document.createElement('li');
-                li.className = 'word-item';
-                li.setAttribute('data-index', index);
-                
-                const wordSpan = document.createElement('span');
-                wordSpan.className = 'word-text';
-                wordSpan.textContent = word;
-                
-                const delBtn = document.createElement('button');
-                delBtn.className = 'delete-btn';
-                delBtn.innerHTML = '✖️';
-                delBtn.setAttribute('aria-label', 'حذف الكلمة');
-                // إضافة حدث الحذف
-                delBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    deleteWordByIndex(index);
-                });
-                
-                li.appendChild(wordSpan);
-                li.appendChild(delBtn);
-                wordsListEl.appendChild(li);
-            });
-        }
-        // تحديث العداد
-        wordCountSpan.textContent = wordsArray.length;
-    }
-    
-    // حذف كلمة بناءً على الفهرس
-    function deleteWordByIndex(index) {
-        if(index >= 0 && index < wordsArray.length) {
-            const removedWord = wordsArray[index];
-            wordsArray.splice(index, 1);
-            updateWordsListUI();
-            showMessage(`✅ تم حذف "${removedWord}"`, false);
-        } else {
-            showMessage("⚠️ حدث خطأ في الحذف", true);
-        }
-    }
-    
-    // إضافة كلمة جديدة (مع التحقق من التكرار والفراغ)
-    function addNewWord() {
-        let rawWord = wordInput.value.trim();
-        if(rawWord === "") {
-            showMessage("❌ لا يمكن إضافة كلمة فارغة!", true);
-            // تأثير بسيط: تظليل الإدخال
-            wordInput.style.borderColor = "#e68a7c";
-            setTimeout(() => { wordInput.style.borderColor = "#d4e0e9"; }, 500);
-            return false;
+        // تحديث معاينة الوقت
+        function updateTargetPreview() {
+            let val = parseFloat(targetInput.value);
+            if (isNaN(val) || val < 0.5) val = 0.5;
+            if (val > 120) val = 120;
+            targetTime = val;
+            targetPreview.innerText = `⏱️ ${targetTime.toFixed(2)} ثانية`;
         }
         
-        // توحيد الكتابة: يمكن الحفاظ على النص كما هو لكن المقارنة case-insensitive (لنفس الكلمة بنفس الحروف)
-        // للعربية عموماً نحتاج مقارنة نصية دقيقة لكن منع التكرار الدقيق (نفس التهجئة)
-        const isDuplicate = wordsArray.some(existingWord => existingWord === rawWord);
-        if(isDuplicate) {
-            showMessage(`⚠️ الكلمة "${rawWord}" موجودة مسبقاً!`, true);
-            wordInput.value = "";
-            wordInput.focus();
-            return false;
+        // تنسيق الوقت
+        function formatTime(seconds) {
+            if (seconds === null || seconds === undefined) return '0.000';
+            let intPart = Math.floor(seconds);
+            let ms = Math.floor((seconds - intPart) * 1000);
+            return `${intPart}.${ms.toString().padStart(3, '0')}`;
         }
-        
-        // إضافة الكلمة
-        wordsArray.push(rawWord);
-        updateWordsListUI();
-        
-        // مسح الحقل وإعطاء تغذية راجعة
-        wordInput.value = "";
-        wordInput.focus();
-        
-        // تأثير ناجح: وميض على الحاوية (اختياري)
-        const container = document.querySelector('.app-container');
-        container.style.transition = '0.1s';
-        container.style.boxShadow = '0 0 0 2px #2c7da0, 0 6px 18px rgba(0,0,0,0.05)';
-        setTimeout(() => {
-            container.style.boxShadow = '0 12px 28px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02)';
-        }, 200);
-        
-        showMessage(`✨ تمت إضافة "${rawWord}" بنجاح!`, false);
-        return true;
-    }
-    
-    // مسح جميع الكلمات
-    function clearAllWords() {
-        if(wordsArray.length === 0) {
-            showMessage("⚠️ القائمة فارغة بالفعل", true);
-            return;
-        }
-        if(confirm("هل أنت متأكد من مسح جميع الكلمات؟")) {
-            wordsArray = [];
-            updateWordsListUI();
-            showMessage("🗑️ تم مسح جميع الكلمات", false);
-        }
-    }
-    
-    // بناء نص التصدير المنظم حسب المطلوب
-    function buildExportText() {
-        if(wordsArray.length === 0) {
-            return "⚠️ لا توجد كلمات للتصدير.";
-        }
-        let header = "الكلمات:\n";
-        let listItems = wordsArray.map(word => `- ${word}`).join("\n");
-        return header + listItems;
-    }
-    
-    // فتح مودال التصدير وتحديث المعاينة
-    function openExportModal() {
-        const exportContent = buildExportText();
-        exportPreview.textContent = exportContent;
-        exportModal.style.display = "flex";
-    }
-    
-    // إغلاق المودال
-    function closeModal() {
-        exportModal.style.display = "none";
-    }
-    
-    // نسخ النص إلى الحافظة
-    async function copyExportText() {
-        const textToCopy = exportPreview.textContent;
-        if(!textToCopy || textToCopy.includes("لا توجد كلمات")) {
-            showMessage("❌ لا يوجد محتوى للنسخ", true);
-            return;
-        }
-        try {
-            await navigator.clipboard.writeText(textToCopy);
-            showMessage("📋 تم نسخ الكلمات إلى الحافظة!", false);
-        } catch(err) {
-            // Fallback قديم
-            const textarea = document.createElement('textarea');
-            textarea.value = textToCopy;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-            showMessage("📋 تم النسخ (طريقة احتياطية)", false);
-        }
-    }
-    
-    // مشاركة واتساب: إنشاء رابط https://wa.me/?text=ENCODED_TEXT
-    function shareWhatsApp() {
-        const exportContent = buildExportText();
-        if(wordsArray.length === 0) {
-            showMessage("⚠️ لا توجد كلمات للمشاركة عبر واتساب", true);
-            closeModal();
-            return;
-        }
-        // ترميز النص ليكون صالحاً لرابط URL
-        const encodedMessage = encodeURIComponent(exportContent);
-        const waLink = `https://wa.me/?text=${encodedMessage}`;
-        // فتح في نافذة جديدة
-        window.open(waLink, '_blank');
-        showMessage("📱 جاري فتح واتساب...", false);
-        // اختياري: لا نغلق المودال تلقائياً حتى يختار المستخدم
-    }
-    
-    // تهيئة الأحداث
-    function initEventListeners() {
-        addBtn.addEventListener('click', () => {
-            addNewWord();
+
+        // ========== إعدادات ==========
+        settingsBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // NEW: منع انتشار الحدث
+            settingsModal.classList.remove('hidden');
         });
         
-        // إضافة كلمة بالضغط على Enter في حقل الإدخال
-        wordInput.addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') {
+        modeDefault.addEventListener('click', (e) => {
+            e.stopPropagation(); // NEW: منع انتشار الحدث
+            modeDefault.classList.add('selected');
+            modeSimultaneous.classList.remove('selected');
+            gameMode = 'default';
+            saveSettingsToLocalStorage();
+        });
+        
+        modeSimultaneous.addEventListener('click', (e) => {
+            e.stopPropagation(); // NEW: منع انتشار الحدث
+            modeSimultaneous.classList.add('selected');
+            modeDefault.classList.remove('selected');
+            gameMode = 'simultaneous';
+            saveSettingsToLocalStorage();
+        });
+        
+        closeSettingsBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // NEW: منع انتشار الحدث
+            settingsModal.classList.add('hidden');
+            modeDisplay.innerText = gameMode === 'default' ? 
+                'الوضع الحالي: منفصل (دور بعد دور)' : 
+                'الوضع الحالي: متزامن (مع بعض)';
+        });
+
+        // ========== بدء اللعبة حسب الوضع ==========
+        function initGame() {
+            player1Name = p1Input.value.trim() || "اللاعب 1";
+            player2Name = p2Input.value.trim() || "اللاعب 2";
+            targetTime = parseFloat(targetInput.value);
+            if (isNaN(targetTime) || targetTime < 0.5) targetTime = 0.5;
+            if (targetTime > 120) targetTime = 120;
+
+            setupPhase.classList.add('hidden');
+            gameplaySequential.classList.add('hidden');
+            gameplaySimultaneous.classList.add('hidden');
+            resultsPhase.classList.add('hidden');
+            
+            if (gameMode === 'default') {
+                startSequentialMode();
+            } else {
+                startSimultaneousMode();
+            }
+        }
+        
+        // ========== الوضع المنفصل (دور بعد دور) ==========
+        function startSequentialMode() {
+            seqCurrentPlayer = 1;
+            seqPlayer1Time = null;
+            seqPlayer2Time = null;
+            seqIsRunning = false;
+            seqPlayer1Done = false;
+            seqPlayer2Done = false;
+            if (seqInterval) clearInterval(seqInterval);
+            
+            sequentialTurn.innerText = `دور ${player1Name}`;
+            seqCurrentPlayerSpan.innerText = player1Name;
+            seqTimerInt.innerText = '0';
+            seqTimerFraction.innerText = '.000';
+            seqStatus.innerText = '⏸️ اضغط Enter أو انقر في أي مكان للبدء';
+            seqProgress.style.width = '0%';
+            seqTarget.innerText = `الوقت المستهدف: ${targetTime.toFixed(2)} ث`;
+            
+            gameplaySequential.classList.remove('hidden');
+        }
+        
+        function updateSequentialTimer() {
+            if (!seqIsRunning || !seqStartTime) return;
+            let now = performance.now();
+            let elapsed = (now - seqStartTime) / 1000;
+            
+            if (seqCurrentPlayer === 1) {
+                seqPlayer1Time = elapsed;
+            } else {
+                seqPlayer2Time = elapsed;
+            }
+            
+            let intSec = Math.floor(elapsed);
+            let ms = Math.floor((elapsed - intSec) * 1000);
+            seqTimerInt.innerText = intSec;
+            seqTimerFraction.innerText = '.' + ms.toString().padStart(3, '0');
+            
+            let percent = Math.min(200, (elapsed / targetTime) * 100);
+            seqProgress.style.width = percent + '%';
+        }
+        
+        function startSequentialTimer() {
+            if (seqIsRunning) return;
+            if ((seqCurrentPlayer === 1 && seqPlayer1Done) || 
+                (seqCurrentPlayer === 2 && seqPlayer2Done)) return;
+            
+            seqStartTime = performance.now();
+            seqIsRunning = true;
+            seqStatus.innerText = '⏱️ قيد التشغيل - اضغط Enter أو انقر في أي مكان للإيقاف';
+            
+            if (seqInterval) clearInterval(seqInterval);
+            seqInterval = setInterval(updateSequentialTimer, 20);
+        }
+        
+        function stopSequentialTimer() {
+            if (!seqIsRunning) return;
+            
+            clearInterval(seqInterval);
+            seqInterval = null;
+            seqIsRunning = false;
+            
+            if (seqCurrentPlayer === 1) {
+                seqPlayer1Done = true;
+                seqStatus.innerText = '✅ تم التوقف';
+                
+                seqCurrentPlayer = 2;
+                setTimeout(() => {
+                    if (!seqPlayer2Done) {
+                        sequentialTurn.innerText = `دور ${player2Name}`;
+                        seqCurrentPlayerSpan.innerText = player2Name;
+                        seqTimerInt.innerText = '0';
+                        seqTimerFraction.innerText = '.000';
+                        seqProgress.style.width = '0%';
+                        seqStatus.innerText = '⏸️ اضغط Enter أو انقر في أي مكان للبدء';
+                        seqIsRunning = false;
+                    }
+                }, 1000);
+            } else {
+                seqPlayer2Done = true;
+                seqStatus.innerText = '✅ تم التوقف';
+                
+                setTimeout(() => {
+                    showResults(
+                        seqPlayer1Time || 0, 
+                        seqPlayer2Time || 0
+                    );
+                }, 1000);
+            }
+        }
+
+        // NEW: وظيفة للتبديل بين بدء وإيقاف التوقيت في الوضع المنفصل
+        function toggleSequentialTimer() {
+            if (!seqPlayer1Done || !seqPlayer2Done) {
+                if (!seqIsRunning && 
+                    ((seqCurrentPlayer === 1 && !seqPlayer1Done) || 
+                     (seqCurrentPlayer === 2 && !seqPlayer2Done))) {
+                    startSequentialTimer();
+                } else if (seqIsRunning) {
+                    stopSequentialTimer();
+                }
+            }
+        }
+        
+        // ========== الوضع المتزامن (مع بعض) ==========
+        function startSimultaneousMode() {
+            if (simPlayer1.interval) clearInterval(simPlayer1.interval);
+            if (simPlayer2.interval) clearInterval(simPlayer2.interval);
+            
+            simPlayer1 = { time: null, isRunning: false, startTime: null, interval: null, done: false };
+            simPlayer2 = { time: null, isRunning: false, startTime: null, interval: null, done: false };
+            
+            simP1Name.innerText = player1Name;
+            simP2Name.innerText = player2Name;
+            simP1TimerInt.innerText = '0';
+            simP1TimerFraction.innerText = '.000';
+            simP2TimerInt.innerText = '0';
+            simP2TimerFraction.innerText = '.000';
+            simP1Status.innerText = '⏸️ جاهز';
+            simP1Status.className = 'player-status status-ready';
+            simP2Status.innerText = '⏸️ جاهز';
+            simP2Status.className = 'player-status status-ready';
+            simP1Progress.style.width = '0%';
+            simP2Progress.style.width = '0%';
+            simTarget.innerText = `الوقت المستهدف: ${targetTime.toFixed(2)} ث`;
+            
+            gameplaySimultaneous.classList.remove('hidden');
+        }
+        
+        function updateSimPlayer1() {
+            if (!simPlayer1.isRunning || !simPlayer1.startTime) return;
+            let now = performance.now();
+            let elapsed = (now - simPlayer1.startTime) / 1000;
+            simPlayer1.time = elapsed;
+            
+            let intSec = Math.floor(elapsed);
+            let ms = Math.floor((elapsed - intSec) * 1000);
+            simP1TimerInt.innerText = intSec;
+            simP1TimerFraction.innerText = '.' + ms.toString().padStart(3, '0');
+            
+            let percent = Math.min(200, (elapsed / targetTime) * 100);
+            simP1Progress.style.width = percent + '%';
+        }
+        
+        function updateSimPlayer2() {
+            if (!simPlayer2.isRunning || !simPlayer2.startTime) return;
+            let now = performance.now();
+            let elapsed = (now - simPlayer2.startTime) / 1000;
+            simPlayer2.time = elapsed;
+            
+            let intSec = Math.floor(elapsed);
+            let ms = Math.floor((elapsed - intSec) * 1000);
+            simP2TimerInt.innerText = intSec;
+            simP2TimerFraction.innerText = '.' + ms.toString().padStart(3, '0');
+            
+            let percent = Math.min(200, (elapsed / targetTime) * 100);
+            simP2Progress.style.width = percent + '%';
+        }
+        
+        function startSimPlayer1() {
+            if (simPlayer1.done) return;
+            if (simPlayer1.interval) clearInterval(simPlayer1.interval);
+            
+            simPlayer1.startTime = performance.now();
+            simPlayer1.isRunning = true;
+            simPlayer1.done = false;
+            
+            simP1Status.innerText = '⏱️ قيد التشغيل';
+            simP1Status.className = 'player-status status-running';
+            
+            simPlayer1.interval = setInterval(updateSimPlayer1, 20);
+        }
+        
+        function startSimPlayer2() {
+            if (simPlayer2.done) return;
+            if (simPlayer2.interval) clearInterval(simPlayer2.interval);
+            
+            simPlayer2.startTime = performance.now();
+            simPlayer2.isRunning = true;
+            simPlayer2.done = false;
+            
+            simP2Status.innerText = '⏱️ قيد التشغيل';
+            simP2Status.className = 'player-status status-running';
+            
+            simPlayer2.interval = setInterval(updateSimPlayer2, 20);
+        }
+        
+        function stopSimPlayer1() {
+            if (!simPlayer1.isRunning || simPlayer1.done) return;
+            
+            clearInterval(simPlayer1.interval);
+            simPlayer1.interval = null;
+            simPlayer1.isRunning = false;
+            simPlayer1.done = true;
+            
+            simP1Status.innerText = '✅ تم التوقف';
+            simP1Status.className = 'player-status status-stopped';
+            updateSimPlayer1();
+            
+            checkSimComplete();
+        }
+        
+        function stopSimPlayer2() {
+            if (!simPlayer2.isRunning || simPlayer2.done) return;
+            
+            clearInterval(simPlayer2.interval);
+            simPlayer2.interval = null;
+            simPlayer2.isRunning = false;
+            simPlayer2.done = true;
+            
+            simP2Status.innerText = '✅ تم التوقف';
+            simP2Status.className = 'player-status status-stopped';
+            updateSimPlayer2();
+            
+            checkSimComplete();
+        }
+
+        // NEW: وظائف للتبديل بين بدء وإيقاف التوقيت للاعبين في الوضع المتزامن
+        function toggleSimPlayer1() {
+            if (!simPlayer1.done) {
+                if (!simPlayer1.isRunning) {
+                    startSimPlayer1();
+                } else {
+                    stopSimPlayer1();
+                }
+            }
+        }
+
+        function toggleSimPlayer2() {
+            if (!simPlayer2.done) {
+                if (!simPlayer2.isRunning) {
+                    startSimPlayer2();
+                } else {
+                    stopSimPlayer2();
+                }
+            }
+        }
+        
+        function checkSimComplete() {
+            if (simPlayer1.done && simPlayer2.done) {
+                setTimeout(() => {
+                    showResults(
+                        simPlayer1.time || 0,
+                        simPlayer2.time || 0
+                    );
+                }, 500);
+            }
+        }
+        
+        // ========== عرض النتائج ==========
+        function showResults(p1Time, p2Time) {
+            gameplaySequential.classList.add('hidden');
+            gameplaySimultaneous.classList.add('hidden');
+            resultsPhase.classList.remove('hidden');
+            
+            let diff1 = Math.abs(p1Time - targetTime);
+            let diff2 = Math.abs(p2Time - targetTime);
+
+            resPlayer1.innerText = player1Name;
+            resPlayer2.innerText = player2Name;
+            player1TimeSpan.innerText = formatTime(p1Time);
+            player2TimeSpan.innerText = formatTime(p2Time);
+            player1DiffSpan.innerText = diff1.toFixed(3);
+            player2DiffSpan.innerText = diff2.toFixed(3);
+            resTargetSpan.innerText = targetTime.toFixed(2);
+
+            if (p1Time === 0 && p2Time === 0) {
+                winnerMsg.innerText = 'لم يسجل أحد';
+            } else if (p1Time === 0) {
+                winnerMsg.innerText = `🏆 الفائز: ${player2Name}`;
+            } else if (p2Time === 0) {
+                winnerMsg.innerText = `🏆 الفائز: ${player1Name}`;
+            } else if (diff1 < diff2) {
+                winnerMsg.innerText = `🏆 الفائز: ${player1Name}`;
+            } else if (diff2 < diff1) {
+                winnerMsg.innerText = `🏆 الفائز: ${player2Name}`;
+            } else {
+                winnerMsg.innerText = `🤝 تعادل!`;
+            }
+        }
+
+        // ========== إعادة التشغيل ==========
+        function fullRestart() {
+            setupPhase.classList.remove('hidden');
+            gameplaySequential.classList.add('hidden');
+            gameplaySimultaneous.classList.add('hidden');
+            resultsPhase.classList.add('hidden');
+            
+            loadSettingsFromLocalStorage();
+            
+            updateTargetPreview();
+        }
+
+        // ========== أحداث النقر بالماوس على الصفحة ==========
+        document.addEventListener('click', function(e) {
+            // نتأكد أننا في مرحلة اللعب وليس في الإعدادات
+            if (!gameplaySequential.classList.contains('hidden')) {
+                // الوضع المنفصل
+                // نتحقق أن النقر ليس على زر الإعادة
+                if (!resetSequentialBtn.contains(e.target) && 
+                    !settingsBtn.contains(e.target) && 
+                    !settingsModal.contains(e.target)) {
+                    toggleSequentialTimer();
+                }
+            }
+            
+            if (!gameplaySimultaneous.classList.contains('hidden')) {
+                // الوضع المتزامن - نحتاج لتحديد أي لاعب
+                // إذا كان النقر على بطاقة اللاعب 1 أو في النصف الأيسر من الشاشة
+                if (simP1Card.contains(e.target) || e.clientX < window.innerWidth / 2) {
+                    if (!resetSimultaneousBtn.contains(e.target) && 
+                        !settingsBtn.contains(e.target) && 
+                        !settingsModal.contains(e.target)) {
+                        toggleSimPlayer1();
+                    }
+                } 
+                // إذا كان النقر على بطاقة اللاعب 2 أو في النصف الأيمن من الشاشة
+                else if (simP2Card.contains(e.target) || e.clientX >= window.innerWidth / 2) {
+                    if (!resetSimultaneousBtn.contains(e.target) && 
+                        !settingsBtn.contains(e.target) && 
+                        !settingsModal.contains(e.target)) {
+                        toggleSimPlayer2();
+                    }
+                }
+            }
+        });
+
+        // أحداث لوحة المفاتيح
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Space') {
                 e.preventDefault();
-                addNewWord();
+            }
+            
+            if (!gameplaySequential.classList.contains('hidden')) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    toggleSequentialTimer();
+                }
+            }
+            
+            if (!gameplaySimultaneous.classList.contains('hidden')) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    toggleSimPlayer1();
+                }
+                
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    toggleSimPlayer2();
+                }
+            }
+        });
+
+        // ========== أحداث الأزرار ==========
+        confirmBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // NEW: منع انتشار الحدث
+            initGame();
+        });
+        
+        fullRestartBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // NEW: منع انتشار الحدث
+            fullRestart();
+        });
+        
+        resetSequentialBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // NEW: منع انتشار الحدث
+            if (!gameplaySequential.classList.contains('hidden')) {
+                startSequentialMode();
             }
         });
         
-        clearAllBtn.addEventListener('click', clearAllWords);
-        
-        exportBtn.addEventListener('click', openExportModal);
-        
-        // أزرار المودال
-        copyTextBtn.addEventListener('click', copyExportText);
-        whatsappShareBtn.addEventListener('click', shareWhatsApp);
-        closeModalBtn.addEventListener('click', closeModal);
-        
-        // إغلاق المودال عند النقر خارج المحتوى
-        exportModal.addEventListener('click', (e) => {
-            if(e.target === exportModal) {
-                closeModal();
+        resetSimultaneousBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // NEW: منع انتشار الحدث
+            if (!gameplaySimultaneous.classList.contains('hidden')) {
+                startSimultaneousMode();
             }
         });
-        
-        // إضافة لمسة تحسين: منع إضافة كلمات مكررة عن طريق التأكيد في addNewWord مسبقاً.
-    }
-    
-    // optional: مسح الكل مع تأكيد
-    // كل الوظائف متكاملة
-    
-    // بدء التطبيق وتهيئة الحالة الأولية (مصفوفة فارغة)
-    function init() {
-        wordsArray = [];     // نبدأ بقائمة نظيفة
-        updateWordsListUI();
-        initEventListeners();
-        // التركيز التلقائي على حقل الإدخال
-        wordInput.focus();
-    }
-    
-    // بدء التشغيل
-    init();
+
+        // تحميل الإعدادات عند بدء التشغيل
+        loadSettingsFromLocalStorage();
+
+        // البداية
+        setupPhase.classList.remove('hidden');
+        modeDisplay.innerText = gameMode === 'default' ? 'الوضع الحالي: منفصل (دور بعد دور)' : 'الوضع الحالي: متزامن (مع بعض)';
+    })();
 </script>
 </body>
 </html>
